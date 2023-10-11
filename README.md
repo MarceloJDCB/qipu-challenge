@@ -13,7 +13,7 @@
 
 - Clone o repositório
     ```bash
-      git pull https://github.com/MarceloJDCB/qipu-challenge.git
+      git clone https://github.com/MarceloJDCB/qipu-challenge.git
     
       cd qipu-challenge
     ```
