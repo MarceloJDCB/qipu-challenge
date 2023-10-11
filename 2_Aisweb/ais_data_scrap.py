@@ -1,4 +1,3 @@
-import logging
 import os
 import time
 import urllib
@@ -31,11 +30,6 @@ class AisWebDriverManager:
                 '--disable-dev-shm-usage',
             ]
     ) -> webdriver.Chrome:
-        logging.basicConfig(
-            filename=f"{datetime.now().strftime('%d-%m-%Y_%H-%M-%S')}.log",
-            encoding='utf-8',
-            level=logging.INFO
-        )
         self.ais_url = ais_url
         self.profile_path = profile_path
         options = webdriver.ChromeOptions()
