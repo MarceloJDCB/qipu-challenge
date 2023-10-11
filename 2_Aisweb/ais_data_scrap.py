@@ -5,6 +5,7 @@ from datetime import date, datetime
 
 import pandas as pd
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -17,8 +18,6 @@ class AisWebDriverManager:
     def __init__(
             self,
             profile_path: str = os.getcwd(),
-            ais_url: str = "https://aisweb.decea.mil.br/",
-            webdriver_timeout_seconds: int = 100,
             options_argument: list = [
                 '--no-sandbox',
                 '--headless',
@@ -30,14 +29,14 @@ class AisWebDriverManager:
                 '--disable-dev-shm-usage',
             ]
     ) -> webdriver.Chrome:
-        self.ais_url = ais_url
+        self.ais_url = os.getenv('AISWEB_URL')
         self.profile_path = profile_path
         options = webdriver.ChromeOptions()
         for argument in options_argument:
             options.add_argument(argument)
-        self.webdriver_timeout_seconds = webdriver_timeout_seconds
+        self.webdriver_timeout_seconds = os.getenv("WEBDRIVER_TIMEOUT_SECONDS")
         self.driver = webdriver.Remote(
-            command_executor="http://chrome:4444/wd/hub",
+            command_executor=os.getenv('REMOTE_DRIVER_URL'),
             options=options
         )
 
@@ -62,9 +61,8 @@ class AisElementGetter:
     def __init__(
         self,
         driver: webdriver.Chrome,
-        action_delay_seconds: int = 0
     ):
-        self.action_delay_seconds = action_delay_seconds
+        self.action_delay_seconds = int(os.getenv("ACTION_DELAY_SECONDS"))
         self.driver = driver
 
     def _ais_pattern(fn):
@@ -158,7 +156,7 @@ class AisScraping:
 
     def check_site_connection(self):
         try:
-            urllib.request.urlopen('https://aisweb.decea.mil.br/')
+            urllib.request.urlopen(os.getenv('AISWEB_URL'))
         except Exception:
             raise Exception("Sem conexão com a internet / Site indisponível")
 
@@ -184,6 +182,7 @@ if __name__ == "__main__":
     print('          "-"       ')
     print(f"Data: {date.today().strftime('%d/%m/%Y')} / Hora: {datetime.now().strftime('%H:%M:%S')}")
     print("")
+    load_dotenv()
     icao = input("Insira o ICAO: ")
     ais = AisScraping(icao=icao)
     aerodrome_info = ais.get_aerodrome_info()
