@@ -183,19 +183,24 @@ if __name__ == "__main__":
     print(f"Data: {date.today().strftime('%d/%m/%Y')} / Hora: {datetime.now().strftime('%H:%M:%S')}")
     print("")
     load_dotenv()
-    icao = input("Insira o ICAO: ")
-    ais = AisScraping(icao=icao)
-    aerodrome_info = ais.get_aerodrome_info()
-    if aerodrome_info:
-        print("")
-        print(f"Nascer do Sol: {aerodrome_info.get('sunrise')}")
-        print(f"Pôr do Sol: {aerodrome_info.get('sunset')}")
-        print(f"METAR: {aerodrome_info.get('metar')}")
-        print(f"TAF: {aerodrome_info.get('taf')} \n")
-        cards = ais.get_cards()
-        print("Cartas disponiveis:")
-        for i, card in enumerate(cards):
-            print(f"{i+1} - {card}")
-    else:
-        print("Aerodromo não encontrado")
+    try:
+        icao = input("Insira o ICAO: ")
+        ais = AisScraping(icao=icao)
+        aerodrome_info = ais.get_aerodrome_info()
+        if aerodrome_info:
+            print("")
+            print(f"Nascer do Sol: {aerodrome_info.get('sunrise')}")
+            print(f"Pôr do Sol: {aerodrome_info.get('sunset')}")
+            print(f"METAR: {aerodrome_info.get('metar')}")
+            print(f"TAF: {aerodrome_info.get('taf')} \n")
+            cards = ais.get_cards()
+            print("Cartas disponiveis:")
+            for i, card in enumerate(cards):
+                print(f"{i+1} - {card}")
+        else:
+            print("Aerodromo não encontrado")
+    except KeyboardInterrupt as er:
+        ais.end_operation()
+        raise er
+        
     ais.end_operation()
